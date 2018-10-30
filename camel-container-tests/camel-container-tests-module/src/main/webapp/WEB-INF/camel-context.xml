@@ -12,6 +12,8 @@
                 address="http://localhost:8080/rest"
                 serviceClass="org.kie.camel.container.api.service.KieCamelTestService" />
 
+  <bean id="identityProcessor" class="org.debug.IdentityProcessor" />
+
   <bean id="kieSpringPostProcessor" class="org.kie.spring.KModuleBeanFactoryPostProcessor"/>
   <kie:kmodule id="test-kmodule">
     <kie:kbase name="rules-kbase" packages="org.kie.camel.container.rules,org.kie.camel.container.api.model" >
