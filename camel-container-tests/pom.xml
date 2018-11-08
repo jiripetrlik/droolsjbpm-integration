@@ -18,6 +18,7 @@
 
   <packaging>pom</packaging>
   <modules>
+    <module>camel-container-tests-kjar</module>
     <module>camel-container-tests-api</module>
     <module>camel-container-tests-module</module>
     <module>camel-container-integration-tests</module>

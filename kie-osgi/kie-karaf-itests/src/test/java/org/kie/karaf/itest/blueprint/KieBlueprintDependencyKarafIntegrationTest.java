@@ -66,7 +66,7 @@ public class KieBlueprintDependencyKarafIntegrationTest extends AbstractKarafInt
                 logLevel(LogLevelOption.LogLevel.WARN),
 
                 // Option to be used to do remote debugging
-                // debugConfiguration("5005", true),
+                 debugConfiguration("5005", true),
 
                 // Load Kie-Aries-Blueprint
                 loadKieFeatures("kie-aries-blueprint"),
