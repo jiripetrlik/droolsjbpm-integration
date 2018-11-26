@@ -9,12 +9,15 @@ import org.kie.server.api.model.ReleaseId;
 
 public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
 
+    private static final String TEST_JAR_GROUP_ID = "org.drools";
+    private static final String TEST_JAR_ARTIFACT_ID = "camel-container-tests-kjar";
+
     @Test
     public void listContainersTest() throws InterruptedException {
         final String containerId = "test-container";
-        final ReleaseId releaseId = new ReleaseId("org.drools",
-                                            "camel-container-tests-kjar",
-                                            "7.15.0-SNAPSHOT");
+        final ReleaseId releaseId = new ReleaseId(TEST_JAR_GROUP_ID,
+                                            TEST_JAR_ARTIFACT_ID,
+                                            testProperties.getProperty(PROJECT_VERSION_TEST_PROPERTY));
         final KieContainerResource kieContainerResource = new KieContainerResource(releaseId);
         kieContainerResource.setContainerId(containerId);
 

@@ -16,8 +16,11 @@
 
 package org.kie.camel.container.integration.tests;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -35,18 +38,29 @@ public class AbstractKieCamelIntegrationTest {
     private static final String CAMEL_TEST_SERVICE_URL = "http://localhost:8080/rest";
     protected static final String DEFAULT_OUT_ID = "out-identifier";
 
+    private static final String TEST_PROPERTIES_FILE = "/test.properties";
+    protected static final String PROJECT_VERSION_TEST_PROPERTY = "project.version";
+
     protected KieCamelTestService kieCamelTestService;
     protected KieCommands kieCommands;
     protected XStream xstreamMarshaller;
 
+    protected Properties testProperties;
+
     @Before
-    public void init() {
+    public void init() throws IOException {
         kieCamelTestService = JAXRSClientFactory.create(CAMEL_TEST_SERVICE_URL, KieCamelTestService.class);
 
         kieCommands = KieServices.Factory.get().getCommands();
 
         final BatchExecutionHelperProviderImpl batchExecutionHelperProvider = new BatchExecutionHelperProviderImpl();
         xstreamMarshaller = batchExecutionHelperProvider.newJSonMarshaller();
+
+        testProperties = new Properties();
+        try (InputStream testPropertiesIS =
+                     AbstractKieCamelIntegrationTest.class.getResourceAsStream(TEST_PROPERTIES_FILE)) {
+            testProperties.load(testPropertiesIS);
+        }
     }
 
     protected ExecutionResults runCommand(Command command) {
