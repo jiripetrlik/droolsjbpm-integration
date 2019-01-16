@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,8 @@ import org.kie.api.command.ExecutableCommand;
 import org.kie.camel.container.api.ExecutionServerCommand;
 import org.kie.camel.container.api.model.Person;
 import org.kie.scanner.KieMavenRepository;
+import org.kie.server.api.marshalling.json.JSONMarshaller;
+import org.kie.server.api.marshalling.xstream.XStreamMarshaller;
 import org.kie.server.api.model.KieContainerResource;
 import org.kie.server.api.model.KieContainerResourceList;
 import org.kie.server.api.model.ReleaseId;
@@ -121,6 +124,19 @@ public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
     }
 
     @Test
+    public void testFindProcesses() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("page", "0");
+        parameters.put("pageSize", "10");
+        final ExecutionServerCommand executionServerCommand = new ExecutionServerCommand();
+        executionServerCommand.setClient("query");
+        executionServerCommand.setOperation("findProcesses");
+        executionServerCommand.setParameters(parameters);
+        final Object response = runOnExecutionServer(executionServerCommand);
+        Assertions.assertThat(response).isNotNull();
+    }
+
+    @Test
     public void testGetProcessDefinition() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put("containerId", CONTAINER_ID);
@@ -136,7 +152,7 @@ public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
 
         final ProcessDefinition processDefinition = (ProcessDefinition) response;
         Assertions.assertThat(processDefinition.getName()).isEqualTo(PROCESS_ID);
-        Assertions.assertThat(processDefinition.getVersion()).isEqualTo("1");
+        Assertions.assertThat(processDefinition.getVersion()).isEqualTo("1.0");
     }
 
     @Test
@@ -190,11 +206,11 @@ public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
     }
 
     private Object runOnExecutionServer(ExecutionServerCommand executionServerCommand) {
-        final BatchExecutionHelperProviderImpl batchExecutionHelperProvider = new BatchExecutionHelperProviderImpl();
-        final XStream xstreamMarshaller = batchExecutionHelperProvider.newJSonMarshaller();
-        final String commandJSON = xstreamMarshaller.toXML(executionServerCommand);
+        final XStreamMarshaller marshaller = new XStreamMarshaller(new HashSet<>(),
+                                                                RemoteIntegrationTest.class.getClassLoader());
+        final String commandJSON = marshaller.marshall(executionServerCommand);
         final String resultString = kieCamelTestService.runOnExecServer(commandJSON);
-        final Object result = xstreamMarshaller.fromXML(resultString);
+        final Object result = marshaller.unmarshall(resultString, Object.class);
 
         return result;
     }
