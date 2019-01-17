@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.thoughtworks.xstream.XStream;
 import org.apache.commons.io.IOUtils;
@@ -124,6 +125,23 @@ public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
     }
 
     @Test
+    public void testFindProcessByContainerIdProcessId() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("containerId", CONTAINER_ID);
+        parameters.put("processId", PROCESS_ID);
+        final ExecutionServerCommand executionServerCommand = new ExecutionServerCommand();
+        executionServerCommand.setClient("query");
+        executionServerCommand.setOperation("findProcessByContainerIdProcessId");
+        executionServerCommand.setParameters(parameters);
+        final Object response = runOnExecutionServer(executionServerCommand);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response).isInstanceOf(ProcessDefinition.class);
+        final ProcessDefinition processDefinition = (ProcessDefinition) response;
+        Assertions.assertThat(processDefinition.getContainerId()).isEqualTo(CONTAINER_ID);
+        Assertions.assertThat(processDefinition.getId()).isEqualTo(PROCESS_ID);
+    }
+
+    @Test
     public void testFindProcesses() {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put("page", "0");
@@ -134,6 +152,64 @@ public class RemoteIntegrationTest extends AbstractKieCamelIntegrationTest {
         executionServerCommand.setParameters(parameters);
         final Object response = runOnExecutionServer(executionServerCommand);
         Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response).isInstanceOf(List.class);
+        final List<ProcessDefinition> processDefinitions = (List<ProcessDefinition>) response;
+        Assertions.assertThat(processDefinitions).isNotEmpty();
+        final List<String> processIds = processDefinitions.stream().map(p -> p.getId()).collect(Collectors.toList());
+        Assertions.assertThat(processIds).contains(PROCESS_ID);
+    }
+
+    @Test
+    public void testFindProcessesByContainerId() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("containerId", CONTAINER_ID);
+        parameters.put("page", "0");
+        parameters.put("pageSize", "10");
+        final ExecutionServerCommand executionServerCommand = new ExecutionServerCommand();
+        executionServerCommand.setClient("query");
+        executionServerCommand.setOperation("findProcessesByContainerId");
+        executionServerCommand.setParameters(parameters);
+        final Object response = runOnExecutionServer(executionServerCommand);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response).isInstanceOf(List.class);
+        final List<ProcessDefinition> processDefinitions = (List<ProcessDefinition>) response;
+        Assertions.assertThat(processDefinitions).isNotEmpty();
+        final List<String> processIds = processDefinitions.stream().map(p -> p.getId()).collect(Collectors.toList());
+        Assertions.assertThat(processIds).contains(PROCESS_ID);
+    }
+
+    @Test
+    public void testFindProcessesByContainerIdWrongId() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("containerId", "wrong-container-id");
+        parameters.put("page", "0");
+        parameters.put("pageSize", "10");
+        final ExecutionServerCommand executionServerCommand = new ExecutionServerCommand();
+        executionServerCommand.setClient("query");
+        executionServerCommand.setOperation("findProcessesByContainerId");
+        executionServerCommand.setParameters(parameters);
+        final Object response = runOnExecutionServer(executionServerCommand);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response).isInstanceOf(List.class);
+        final List<ProcessDefinition> processDefinitions = (List<ProcessDefinition>) response;
+        Assertions.assertThat(processDefinitions).isEmpty();
+    }
+
+    @Test
+    public void testFindProcessesById() {
+        final Map<String, String> parameters = new HashMap<>();
+        parameters.put("processId", PROCESS_ID);
+        final ExecutionServerCommand executionServerCommand = new ExecutionServerCommand();
+        executionServerCommand.setClient("query");
+        executionServerCommand.setOperation("findProcessesById");
+        executionServerCommand.setParameters(parameters);
+        final Object response = runOnExecutionServer(executionServerCommand);
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response).isInstanceOf(List.class);
+        final List<ProcessDefinition> processDefinitions = (List<ProcessDefinition>) response;
+        Assertions.assertThat(processDefinitions).isNotEmpty();
+        final List<String> processIds = processDefinitions.stream().map(p -> p.getId()).collect(Collectors.toList());
+        Assertions.assertThat(processIds).contains(PROCESS_ID);
     }
 
     @Test
