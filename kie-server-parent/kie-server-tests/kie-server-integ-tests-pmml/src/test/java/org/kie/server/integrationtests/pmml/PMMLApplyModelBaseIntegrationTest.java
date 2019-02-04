@@ -6,7 +6,7 @@ import org.kie.server.client.RuleServicesClient;
 import org.kie.server.integrationtests.shared.basetests.RestJmsSharedBaseIntegrationTest;
 
 
-public abstract class PMMLApplyModelBaseTest extends RestJmsSharedBaseIntegrationTest {
+public abstract class PMMLApplyModelBaseIntegrationTest extends RestJmsSharedBaseIntegrationTest {
 
     protected RuleServicesClient rulesClient;
 

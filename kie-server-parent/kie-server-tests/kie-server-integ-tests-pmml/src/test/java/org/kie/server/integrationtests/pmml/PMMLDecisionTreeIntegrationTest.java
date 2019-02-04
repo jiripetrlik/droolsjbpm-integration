@@ -18,9 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class PMMLDecisionTreeTest extends PMMLApplyModelBaseTest {
+public class PMMLDecisionTreeIntegrationTest extends PMMLApplyModelBaseIntegrationTest {
 
-    public static final Logger LOG = LoggerFactory.getLogger(PMMLDecisionTreeTest.class);
+    public static final Logger LOG = LoggerFactory.getLogger(PMMLDecisionTreeIntegrationTest.class);
     
     private static final ReleaseId releaseId = new ReleaseId("org.kie.server.testing", "decision-tree-model", "1.0.0.Final");
     private static final String CONTAINER_1_ID = "pmml-container";
@@ -28,6 +28,7 @@ public class PMMLDecisionTreeTest extends PMMLApplyModelBaseTest {
     
     @BeforeClass
     public static void deployArtifacts() {
+        KieServerDeployer.buildAndDeployCommonMavenParent();
         commandsFactory = KieServices.Factory.get().getCommands();
         KieServerDeployer.buildAndDeployMavenProjectFromResource("/kjars-sources/decision-tree");
         

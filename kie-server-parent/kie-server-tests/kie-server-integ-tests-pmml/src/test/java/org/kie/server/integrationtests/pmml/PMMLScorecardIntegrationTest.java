@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class PMMLScorecardTest extends PMMLApplyModelBaseTest {
+public class PMMLScorecardIntegrationTest extends PMMLApplyModelBaseIntegrationTest {
 
-    public static final Logger LOG = LoggerFactory.getLogger(PMMLDecisionTreeTest.class);
+    public static final Logger LOG = LoggerFactory.getLogger(PMMLDecisionTreeIntegrationTest.class);
 
     private static final ReleaseId releaseId = new ReleaseId("org.kie.server.testing", "scorecard-model", "1.0.0.Final");
     private static final String CONTAINER_1_ID = "pmml-container";
@@ -30,6 +30,7 @@ public class PMMLScorecardTest extends PMMLApplyModelBaseTest {
 
     @BeforeClass
     public static void deployArtifacts() {
+        KieServerDeployer.buildAndDeployCommonMavenParent();
         commandsFactory = KieServices.Factory.get().getCommands();
         KieServerDeployer.buildAndDeployMavenProjectFromResource("/kjars-sources/scorecard");
 
